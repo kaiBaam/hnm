@@ -1,7 +1,7 @@
-// ================== WINDOW LOAD ==================
-window.onload = function() {
+// script.js
 
-  // ================== THEME SWITCHER ==================
+window.onload = function() {
+  // Switch theme when button is clicked
   const switchButton = document.getElementById("switchButton");
   const letterboxdLink = document.getElementById("letterboxdLink");
 
@@ -20,7 +20,7 @@ window.onload = function() {
     });
   }
 
-  // ================== SEARCH BAR TOGGLE ==================
+  // Show the search input when clicking the search text
   function showSearch() {
     const searchText = document.getElementById("searchText");
     const searchInput = document.getElementById("searchInput");
@@ -36,10 +36,9 @@ window.onload = function() {
       }
     }
   }
+  window.showSearch = showSearch; // make it global
 
-  window.showSearch = showSearch; // Make globally available
-
-  // ================== SEARCH SUBMISSION ==================
+  // Logic for search submissions
   const searchInput = document.getElementById("searchInput");
   if (searchInput) {
     searchInput.addEventListener("keypress", function(e) {
@@ -52,7 +51,7 @@ window.onload = function() {
     });
   }
 
-  // ================== LATEST REVIEWS IMAGE SWITCHER ==================
+  // Latest Reviews section image switcher
   const titles = document.querySelectorAll('.right-titles li');
   const mainImage = document.getElementById('mainImage');
   const imageLink = document.getElementById('imageLink');
@@ -68,7 +67,7 @@ window.onload = function() {
     });
   }
 
-  // ================== RANDOMIZE STARTING SIDE ==================
+  // Randomize which side is displayed on initial load
   if (letterboxdLink && switchButton) {
     if (Math.random() < 0.5) {
       document.body.classList.add("hilary-theme");
@@ -82,4 +81,45 @@ window.onload = function() {
     }
   }
 
+  // Fetch and display blog posts from Strapi
+  fetch('http://localhost:1337/api/posts?populate=*')
+    .then(response => response.json())
+    .then(data => {
+      const posts = data.data;
+      const postsGrid = document.getElementById('postsGrid');
+
+      if (postsGrid) {
+        posts.forEach(post => {
+          const attributes = post.attributes;
+          const title = attributes.Title || "Untitled";
+          const body = attributes.Body || "";
+          const date = attributes.Date || "";
+          const genre = attributes.Genre || "Review";
+
+          let imageUrl = "";
+          if (attributes.Poster?.data?.attributes?.url) {
+            imageUrl = attributes.Poster.data.attributes.url;
+            if (imageUrl.startsWith('/')) {
+              imageUrl = `http://localhost:1337${imageUrl}`;
+            }
+          }
+
+          const article = document.createElement('article');
+          article.className = 'tease-post';
+          article.innerHTML = `
+            <div class="post-meta">
+              <time datetime="${date}">${date}</time>
+              <span class="post-tag">${genre}</span>
+            </div>
+            <div class="post-content">
+              <h3><a href="#">${title}</a></h3>
+              <p>${body.substring(0, 100)}...</p>
+            </div>
+            <hr>
+          `;
+          postsGrid.appendChild(article);
+        });
+      }
+    })
+    .catch(err => console.error('Error loading posts:', err));
 };
