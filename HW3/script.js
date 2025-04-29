@@ -1,7 +1,6 @@
 // script.js
 
 window.onload = function() {
-  // Switch theme when button is clicked
   const switchButton = document.getElementById("switchButton");
   const letterboxdLink = document.getElementById("letterboxdLink");
 
@@ -20,7 +19,6 @@ window.onload = function() {
     });
   }
 
-  // Show the search input when clicking the search text
   function showSearch() {
     const searchText = document.getElementById("searchText");
     const searchInput = document.getElementById("searchInput");
@@ -36,9 +34,8 @@ window.onload = function() {
       }
     }
   }
-  window.showSearch = showSearch; // make it global
+  window.showSearch = showSearch;
 
-  // Logic for search submissions
   const searchInput = document.getElementById("searchInput");
   if (searchInput) {
     searchInput.addEventListener("keypress", function(e) {
@@ -51,7 +48,6 @@ window.onload = function() {
     });
   }
 
-  // Latest Reviews section image switcher
   const titles = document.querySelectorAll('.right-titles li');
   const mainImage = document.getElementById('mainImage');
   const imageLink = document.getElementById('imageLink');
@@ -67,7 +63,6 @@ window.onload = function() {
     });
   }
 
-  // Randomize which side is displayed on initial load
   if (letterboxdLink && switchButton) {
     if (Math.random() < 0.5) {
       document.body.classList.add("hilary-theme");
@@ -81,28 +76,20 @@ window.onload = function() {
     }
   }
 
-  // Fetch and display blog posts from Strapi
+  // Fetch posts from Strapi v5 structure
   fetch('http://localhost:1337/api/posts?populate=*')
     .then(response => response.json())
     .then(data => {
       const posts = data.data;
       const postsGrid = document.getElementById('postsGrid');
 
-      if (postsGrid) {
+      if (Array.isArray(posts) && postsGrid) {
         posts.forEach(post => {
           const attributes = post.attributes;
           const title = attributes.Title || "Untitled";
-          const body = attributes.Body || "";
+          const body = Array.isArray(attributes.Body) ? attributes.Body[0]?.children?.[0]?.text || "" : attributes.Body || "";
           const date = attributes.Date || "";
           const genre = attributes.Genre || "Review";
-
-          let imageUrl = "";
-          if (attributes.Poster?.data?.attributes?.url) {
-            imageUrl = attributes.Poster.data.attributes.url;
-            if (imageUrl.startsWith('/')) {
-              imageUrl = `http://localhost:1337${imageUrl}`;
-            }
-          }
 
           const article = document.createElement('article');
           article.className = 'tease-post';
