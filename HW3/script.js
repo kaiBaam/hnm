@@ -89,9 +89,8 @@ window.onload = function() {
           const title = attributes.Title || "Untitled";
 
           let body = "";
-          const block = attributes.Body?.content?.[0]?.content?.[0];
-          if (block && block.text) {
-            body = block.text;
+          if (Array.isArray(attributes.Body)) {
+            body = attributes.Body[0]?.children?.[0]?.text || "";
           }
 
           const date = attributes.Date || "";
