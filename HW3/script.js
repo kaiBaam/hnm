@@ -77,7 +77,7 @@ window.onload = function() {
   }
 
   // Fetch posts from Strapi v5 structure
-  fetch('http://localhost:1337/api/posts?populate=*')
+  fetch('https://h-w.onrender.com/api/posts?populate=*')
     .then(response => response.json())
     .then(data => {
       const posts = data.data;
