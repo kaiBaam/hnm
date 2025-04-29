@@ -89,8 +89,15 @@ window.onload = function() {
           const title = attributes.Title || "Untitled";
 
           let body = "";
-          if (Array.isArray(attributes.Body)) {
-            body = attributes.Body[0]?.children?.[0]?.text || "";
+          try {
+            const paragraphs = attributes.Body;
+            if (Array.isArray(paragraphs)) {
+              const first = paragraphs[0];
+              const textNode = first?.children?.find(child => child.type === "text");
+              body = textNode?.text || "";
+            }
+          } catch (e) {
+            console.warn("Could not parse body:", e);
           }
 
           const date = attributes.Date || "";
