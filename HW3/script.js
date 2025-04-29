@@ -87,7 +87,13 @@ window.onload = function() {
         posts.forEach(post => {
           const attributes = post.attributes;
           const title = attributes.Title || "Untitled";
-          const body = Array.isArray(attributes.Body) ? attributes.Body[0]?.children?.[0]?.text || "" : attributes.Body || "";
+
+          let body = "";
+          const block = attributes.Body?.content?.[0]?.content?.[0];
+          if (block && block.text) {
+            body = block.text;
+          }
+
           const date = attributes.Date || "";
           const genre = attributes.Genre || "Review";
 
