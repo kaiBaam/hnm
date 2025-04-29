@@ -1,6 +1,7 @@
-// script.js
-
+// ================== WINDOW LOAD ==================
 window.onload = function() {
+
+  // ================== THEME SWITCHER ==================
   const switchButton = document.getElementById("switchButton");
   const letterboxdLink = document.getElementById("letterboxdLink");
 
@@ -19,6 +20,7 @@ window.onload = function() {
     });
   }
 
+  // ================== SEARCH BAR TOGGLE ==================
   function showSearch() {
     const searchText = document.getElementById("searchText");
     const searchInput = document.getElementById("searchInput");
@@ -34,8 +36,10 @@ window.onload = function() {
       }
     }
   }
-  window.showSearch = showSearch;
 
+  window.showSearch = showSearch; // Make globally available
+
+  // ================== SEARCH SUBMISSION ==================
   const searchInput = document.getElementById("searchInput");
   if (searchInput) {
     searchInput.addEventListener("keypress", function(e) {
@@ -48,6 +52,7 @@ window.onload = function() {
     });
   }
 
+  // ================== LATEST REVIEWS IMAGE SWITCHER ==================
   const titles = document.querySelectorAll('.right-titles li');
   const mainImage = document.getElementById('mainImage');
   const imageLink = document.getElementById('imageLink');
@@ -63,6 +68,7 @@ window.onload = function() {
     });
   }
 
+  // ================== RANDOMIZE STARTING SIDE ==================
   if (letterboxdLink && switchButton) {
     if (Math.random() < 0.5) {
       document.body.classList.add("hilary-theme");
@@ -76,49 +82,5 @@ window.onload = function() {
     }
   }
 
-  // Fetch posts from Strapi v5 structure
-  fetch('https://h-w.onrender.com/api/posts?populate=*')
-    .then(response => response.json())
-    .then(data => {
-      const posts = data.data;
-      const postsGrid = document.getElementById('postsGrid');
-
-      if (Array.isArray(posts) && postsGrid) {
-        posts.forEach(post => {
-          const attributes = post.attributes;
-          const title = attributes.Title || "Untitled";
-
-          let body = "";
-          try {
-            const paragraphs = attributes.Body;
-            if (Array.isArray(paragraphs)) {
-              const first = paragraphs[0];
-              const textNode = first?.children?.find(child => child.type === "text");
-              body = textNode?.text || "";
-            }
-          } catch (e) {
-            console.warn("Could not parse body:", e);
-          }
-
-          const date = attributes.Date || "";
-          const genre = attributes.Genre || "Review";
-
-          const article = document.createElement('article');
-          article.className = 'tease-post';
-          article.innerHTML = `
-            <div class="post-meta">
-              <time datetime="${date}">${date}</time>
-              <span class="post-tag">${genre}</span>
-            </div>
-            <div class="post-content">
-              <h3><a href="#">${title}</a></h3>
-              <p>${body.substring(0, 100)}...</p>
-            </div>
-            <hr>
-          `;
-          postsGrid.appendChild(article);
-        });
-      }
-    })
-    .catch(err => console.error('Error loading posts:', err));
 };
+
